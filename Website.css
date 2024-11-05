@@ -22,7 +22,7 @@ body {
 .class_info:hover{
     margin-top: 0.6em;
 }
-.nav_info{
+h1,.nav_info{
     margin: 0;
 }
 
@@ -60,9 +60,7 @@ li a:hover{
     color: white;
     font-size: 17px;
 }
-h1{
-    margin:0;
-}
+
 #title{
     margin: 40px 50px;
     padding: 20px 0 20px 35px;
