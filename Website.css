@@ -82,15 +82,16 @@ li a:hover{
     top: 10px;
     right: 10px;
     font-size: 30px;
-    color: red;
+    color: green;
+
     padding: 10px;
-    background-color: #f5f9fc ;
+    background-color: #f5f9fc;
     border-radius: 10%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-
 }
 .icon:hover {
     animation: shake 0.7s ease;
+    color: red;
 }
 
 @keyframes shake {
