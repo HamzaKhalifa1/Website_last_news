@@ -16,19 +16,25 @@ document.addEventListener('click', function (event) {
             if (result.isConfirmed) {
                 blogContainer.remove();
                 deleteBlogFromServer(blogId);
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Action was canceled.",
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
             }
         });
     }
 });
 
 function deleteBlogFromServer(blogId) {
-    fetch(`http://localhost:8000/blogs/${blogId}`, {
-        method: 'DELETE',
-    })
+    fetch(`http://localhost:8000/blogs/${blogId}`, {method: 'DELETE',})
         .then(() => {
             Swal.fire({
                 title: 'Deleted!',
-                text: `The blog with ID ${blogId} has been successfully deleted.`,
+                text: 'The blog has been successfully deleted.',
                 icon: 'success',
                 timer: 2000,
                 showConfirmButton: false
@@ -46,8 +52,8 @@ function deleteBlogFromServer(blogId) {
 }
 fetchBlogs();
 
-document.getElementById('new-blog-section').addEventListener('click', function (event) {
-    if (event.target.id === 'create-new-blog') {
+document.addEventListener('click', function (event) {
+    if (event.target.id==='create-new-blog') {
         Swal.fire({
             title: 'Create New Blog',
             html: `
@@ -62,7 +68,6 @@ document.getElementById('new-blog-section').addEventListener('click', function (
                     <input type="text" id="image-url" name="image-url" class="swal2-input" placeholder="Enter image URL" required />
                 </form>
             `,
-            focusConfirm: false,
             showCancelButton: true,
             confirmButtonText: 'Submit',
             cancelButtonText: 'Cancel',
@@ -121,10 +126,11 @@ document.getElementById('new-blog-section').addEventListener('click', function (
 
 function fetchBlogs() {
     fetch('http://localhost:8000/blogs')
-        .then((response) => response.json())
+        .then((response) =>  response.json())
         .then((data) => {
             const blogsContainer = document.getElementById('over_all');
             blogsContainer.innerHTML = '';
+            console.log(data);
 
             data.forEach((blog) => {
                 const blogElement = document.createElement('div');
@@ -145,3 +151,5 @@ function fetchBlogs() {
             console.error('Error fetching blogs:', error);
         });
 }
+arr=[1,2,3,4,5,6,7,8,9];
+arr.forEach((element) => {console.log(element);});
