@@ -1,3 +1,4 @@
+fetchBlogs();
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('icon')) {
         const blogContainer = event.target.closest('.container');
@@ -11,7 +12,7 @@ document.addEventListener('click', function (event) {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
+            cancelButtonText: 'Cancel',
         }).then((result) => {
             if (result.isConfirmed) {
                 blogContainer.remove();
@@ -30,7 +31,9 @@ document.addEventListener('click', function (event) {
 });
 
 function deleteBlogFromServer(blogId) {
-    fetch(`http://localhost:8000/blogs/${blogId}`, {method: 'DELETE',})
+    fetch(`http://localhost:8000/blogs/${blogId}`, {
+        method: 'DELETE',
+    })
         .then(() => {
             Swal.fire({
                 title: 'Deleted!',
@@ -39,6 +42,7 @@ function deleteBlogFromServer(blogId) {
                 timer: 2000,
                 showConfirmButton: false
             });
+            fetchBlogs();
         })
         .catch((error) => {
             console.error('Error during deletion:', error);
@@ -50,87 +54,13 @@ function deleteBlogFromServer(blogId) {
             });
         });
 }
-fetchBlogs();
-
-document.addEventListener('click', function (event) {
-    if (event.target.id==='create-new-blog') {
-        Swal.fire({
-            title: 'Create New Blog',
-            html: `
-                <form id="new-blog-form">
-                    <label for="title">Title:</label>
-                    <input type="text" id="title" name="title" required class="swal2-input" placeholder="Enter title" />
-
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description" required class="swal2-textarea" placeholder="Enter description"></textarea>
-
-                    <label for="image-url">Image URL:</label>
-                    <input type="text" id="image-url" name="image-url" class="swal2-input" placeholder="Enter image URL" required />
-                </form>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Submit',
-            cancelButtonText: 'Cancel',
-            preConfirm: () => {
-                const form = document.getElementById('new-blog-form');
-                const title = form.title.value.trim();
-                const description = form.description.value.trim();
-                const imageUrl = form['image-url'].value.trim();
-
-                // Validate inputs
-                const titleRegex = /^[A-Z][a-zA-Z ]{1,49}$/;
-                const descriptionRegex = /^[a-zA-Z ]{1,1000}$/;
-
-                if (!titleRegex.test(title)) {
-                    Swal.showValidationMessage('Title must start with a capital letter and be less than 50 characters.');
-                    return false;
-                }
-                if (!descriptionRegex.test(description)) {
-                    Swal.showValidationMessage('Description must contain only English characters and be less than 1000 characters.');
-                    return false;
-                }
-                if (!imageUrl) {
-                    Swal.showValidationMessage('Image URL is required!');
-                    return false;
-                }
-
-                return { title, description, imageUrl };
-            }
-
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const { title, description, imageUrl } = result.value;
-
-                // Send the data to the JSON server
-                fetch('http://localhost:8000/blogs', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ title, description, imageUrl })
-                })
-                    .then((response) => response.json())
-                    .then(() => {
-                        Swal.fire('Blog Created!', 'Your new blog has been created.', 'success');
-                        fetchBlogs();
-                    })
-                    .catch((error) => {
-                        console.error('Error adding blog:', error);
-                        Swal.fire('Error!', 'There was an issue creating the blog. Please try again.', 'error');
-                    });
-            }
-        });
-    }
-});
-
 
 function fetchBlogs() {
     fetch('http://localhost:8000/blogs')
-        .then((response) =>  response.json())
+        .then((response) => response.json())
         .then((data) => {
             const blogsContainer = document.getElementById('over_all');
             blogsContainer.innerHTML = '';
-            console.log(data);
 
             data.forEach((blog) => {
                 const blogElement = document.createElement('div');
@@ -151,5 +81,161 @@ function fetchBlogs() {
             console.error('Error fetching blogs:', error);
         });
 }
-arr=[1,2,3,4,5,6,7,8,9];
-arr.forEach((element) => {console.log(element);});
+
+document.addEventListener('click', function (event) {
+    if (event.target.id === 'create-new-blog') {
+        Swal.fire({
+            title: 'Create New Blog',
+            html: `
+                <form id="new-blog-form">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required class="swal2-input" placeholder="Enter title" />
+                    <div id="title-error" class="error-message"></div>
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required class="swal2-textarea" placeholder="Enter description"></textarea>
+                    <div id="description-error" class="error-message"></div>
+
+                    <label for="image-url">Image URL:</label>
+                    <input type="text" id="image-url" name="image-url" required class="swal2-input" placeholder="Enter image URL" />
+                    <div id="image-url-error" class="error-message"></div>
+                </form>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            didOpen: () => {
+                const form = document.getElementById('new-blog-form');
+                const titleField = form.title;
+                const descriptionField = form.description;
+                const imageUrlField = form['image-url'];
+                const titleError = document.getElementById('title-error');
+                const descriptionError = document.getElementById('description-error');
+                const imageUrlError = document.getElementById('image-url-error');
+
+                const validateTitle = () => {
+                    const titleValue = titleField.value.trim();
+                    const errors = [];
+
+                    if (!/^[A-Z]/.test(titleValue)) {
+                        errors.push('Title must start with a capital letter');
+                    }
+
+                    if (titleValue.length > 50) {
+                        errors.push('be less than 50 characters');
+                    }
+
+                    if (errors.length > 0) {
+                        titleError.textContent = errors.join(' and ') + '.';
+                        titleField.classList.add('input-error');
+                    } else {
+                        titleError.textContent = '';
+                        titleField.classList.remove('input-error');
+                    }
+                };
+
+                const validateDescription = () => {
+                    const descriptionValue = descriptionField.value.trim();
+                    const errors = [];
+
+                    if (!/^[a-zA-Z ]*$/.test(descriptionValue)) {
+                        errors.push('Description must contain only English characters and spaces');
+                    }
+
+                    if (descriptionValue.length > 1000) {
+                        errors.push('be less than 1000 characters');
+                    }
+
+                    if (errors.length > 0) {
+                        descriptionError.textContent = errors.join(' and ') + '.';
+                        descriptionField.classList.add('input-error');
+                    } else {
+                        descriptionError.textContent = '';
+                        descriptionField.classList.remove('input-error');
+                    }
+                };
+
+                const validateImageUrl = () => {
+                    const imageUrlValue = imageUrlField.value.trim();
+                    const errors = [];
+
+                    if (!imageUrlValue) {
+                        errors.push('Image URL is required');
+                    }
+
+                    const urlRegex = /^(https?:\/\/[^\s]+)$/;
+                    if (imageUrlValue && !urlRegex.test(imageUrlValue)) {
+                        errors.push('Invalid URL format');
+                    }
+
+                    if (errors.length > 0) {
+                        imageUrlError.textContent = errors.join(' and ') + '.';
+                        imageUrlField.classList.add('input-error');
+                    } else {
+                        imageUrlError.textContent = '';
+                        imageUrlField.classList.remove('input-error');
+                    }
+                };
+
+                titleField.addEventListener('input', validateTitle);
+                descriptionField.addEventListener('input', validateDescription);
+                imageUrlField.addEventListener('input', validateImageUrl);
+            },
+
+            preConfirm: () => {
+                const form = document.getElementById('new-blog-form');
+                const title = form.title.value.trim();
+                const description = form.description.value.trim();
+                const imageUrl = form['image-url'].value.trim();
+                const errors = [];
+
+                if (!/^[A-Z]/.test(title)) {
+                    return false;
+                }
+
+                if (title.length > 50) {
+                    return false;
+                }
+
+                if (!/^[a-zA-Z ]*$/.test(description)) {
+                    return false;
+                }
+
+                if (description.length > 1000) {
+                    return false;
+                }
+
+                if (!imageUrl) {
+                    return false;
+                }
+
+                if (errors.length > 0) {
+                    return false;
+                }
+
+                return { title, description, imageUrl };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { title, description, imageUrl } = result.value;
+
+                fetch('http://localhost:8000/blogs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title, description, imageUrl })
+                })
+                    .then((response) => response.json())
+                    .then(() => {
+                        Swal.fire('Blog Created!', 'Your new blog has been created.', 'success');
+                        fetchBlogs();
+                    })
+                    .catch((error) => {
+                        console.error('Error adding blog:', error);
+                        Swal.fire('Error!', 'There was an issue creating the blog. Please try again.', 'error');
+                    });
+            }
+        });
+    }
+});

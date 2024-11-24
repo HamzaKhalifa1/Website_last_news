@@ -103,6 +103,17 @@ li a:hover{
     position: relative;
     box-shadow: 0 15px 25px 2px rgba(0, 0, 0, 0.41);
 }
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.input-error {
+    border: 2px solid red !important;
+    outline: none;
+}
+
 
 .img{
     width:100%;
@@ -166,7 +177,7 @@ p{
     margin: 45px ;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 25px 2px rgba(0, 0, 0, 0.41)
 }
 #create-new-blog{
     margin: 17px auto;
