@@ -212,7 +212,6 @@ document.addEventListener('click', function (event) {
                 if (errors.length > 0) {
                     return false;
                 }
-
                 return { title, description, imageUrl };
             }
         }).then((result) => {
