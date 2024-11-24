@@ -208,7 +208,6 @@ document.addEventListener('click', function (event) {
                 if (!imageUrl) {
                     return false;
                 }
-
                 if (errors.length > 0) {
                     return false;
                 }
