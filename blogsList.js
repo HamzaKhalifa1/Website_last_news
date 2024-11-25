@@ -177,9 +177,37 @@ document.addEventListener('click', function (event) {
                     }
                 };
 
-                titleField.addEventListener('input', validateTitle);
-                descriptionField.addEventListener('input', validateDescription);
-                imageUrlField.addEventListener('input', validateImageUrl);
+                const updateSubmitButtonState = () => {
+                    const submitButton = Swal.getConfirmButton();
+                    const isTitleValid = /^[A-Z]/.test(titleField.value.trim()) && titleField.value.trim().length <= 50;
+                    const isDescriptionValid = /^[a-zA-Z ]*$/.test(descriptionField.value.trim()) && descriptionField.value.trim().length <= 1000;
+                    const isImageUrlValid = /^(https?:\/\/[^\s]+)$/.test(imageUrlField.value.trim());
+
+                    if (isTitleValid && isDescriptionValid && isImageUrlValid) {
+                        submitButton.style.opacity = '1';
+                        submitButton.disabled = false;
+                    } else {
+                        submitButton.style.opacity = '0.5';
+                        submitButton.disabled = true;
+                    }
+                };
+
+                titleField.addEventListener('input', () => {
+                    validateTitle();
+                    updateSubmitButtonState();
+                });
+
+                descriptionField.addEventListener('input', () => {
+                    validateDescription();
+                    updateSubmitButtonState();
+                });
+
+                imageUrlField.addEventListener('input', () => {
+                    validateImageUrl();
+                    updateSubmitButtonState();
+                });
+
+                updateSubmitButtonState();
             },
 
             preConfirm: () => {
@@ -187,30 +215,13 @@ document.addEventListener('click', function (event) {
                 const title = form.title.value.trim();
                 const description = form.description.value.trim();
                 const imageUrl = form['image-url'].value.trim();
-                const errors = [];
 
-                if (!/^[A-Z]/.test(title)) {
-                    return false;
-                }
-
-                if (title.length > 50) {
+                if (!/^[A-Z]/.test(title) || title.length > 50 ||
+                    !/^[a-zA-Z ]*$/.test(description) || description.length > 1000 ||
+                    !/^(https?:\/\/[^\s]+)$/.test(imageUrl)) {
                     return false;
                 }
 
-                if (!/^[a-zA-Z ]*$/.test(description)) {
-                    return false;
-                }
-
-                if (description.length > 1000) {
-                    return false;
-                }
-
-                if (!imageUrl) {
-                    return false;
-                }
-                if (errors.length > 0) {
-                    return false;
-                }
                 return { title, description, imageUrl };
             }
         }).then((result) => {
