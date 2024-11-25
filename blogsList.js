@@ -221,7 +221,6 @@ document.addEventListener('click', function (event) {
                     !/^(https?:\/\/[^\s]+)$/.test(imageUrl)) {
                     return false;
                 }
-
                 return { title, description, imageUrl };
             }
         }).then((result) => {
