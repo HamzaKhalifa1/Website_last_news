@@ -178,17 +178,16 @@ document.addEventListener('click', function (event) {
                 };
 
                 const updateSubmitButtonState = () => {
+                    console.log(Swal);
                     const submitButton = Swal.getConfirmButton();
                     const isTitleValid = /^[A-Z]/.test(titleField.value.trim()) && titleField.value.trim().length <= 50;
                     const isDescriptionValid = /^[a-zA-Z ]*$/.test(descriptionField.value.trim()) && descriptionField.value.trim().length <= 1000;
                     const isImageUrlValid = /^(https?:\/\/[^\s]+)$/.test(imageUrlField.value.trim());
 
                     if (isTitleValid && isDescriptionValid && isImageUrlValid) {
-                        submitButton.style.opacity = '1';
-                        submitButton.disabled = false;
+                        submitButton.style.display = 'block';
                     } else {
-                        submitButton.style.opacity = '0.5';
-                        submitButton.disabled = true;
+                        submitButton.style.display = 'none';
                     }
                 };
 
